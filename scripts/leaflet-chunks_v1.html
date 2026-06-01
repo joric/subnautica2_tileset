@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">  
+<link rel="shortcut icon" type="image/x-icon" href="data:," />
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+
+<style>
+
+html, body, #map { width:100%; height: 100%; margin: 0; padding: 0; }
+.leaflet-grab { cursor: auto; }
+
+</style>
+
+<div id="map"></div>
+
+<script>
+
+window.onload = function() {
+  let chunkSize = 12800;
+  let tileSize = 2048;
+  let x=-29;
+  let y=22;
+
+  //let baseChunk = 'Chunk_12800_2048p_-27_33.png';
+  //let baseChunk = 'Chunk_12800_2048p_-19_33.png';
+
+  s = 'Chunk_25600_2048p_-10_16.png'
+
+
+  // Parse with regex
+  let match = s.match(/Chunk_(\d+)_(\d+)p_(-?\d+)_(-?\d+)\.png/);
+  if (match) {
+      chunkSize = parseInt(match[1]);  // 12800
+      tileSize = parseInt(match[2]);   // 2048
+      x = parseInt(match[3]);          // -29
+      y = parseInt(match[4]);          // 22
+      console.log(chunkSize, tileSize, x, y);
+  }
+
+  /*
+  let locations = {
+    lifepod : { left : -337193, top : 433406, alt : 1000, size : chunkSize },
+    planetary : { left : -222771, top : 432320, alt : 1000, size : chunkSize*2 },
+    turbine : { left : -160717, top : 436872, alt : 1000, size : chunkSize*2 },
+    the_pit : { left : -344231.96875, top : 449815.84375, alt:1000, size : chunkSize},
+    glyph : { left: -232185.984375, top:431499.40625, alt:1000, size: chunkSize},
+  }
+
+  let cc = locations.glyph;
+
+  let x = Math.floor(cc.left/chunkSize);
+  let y = Math.floor(cc.top/chunkSize);
+  */
+
+  let tileZoom = Math.floor(Math.log2(tileSize));
+
+  let scale = (chunkSize * Math.pow(2, tileZoom)) / tileSize;
+  let centerX = (x + 0.5) * chunkSize / scale;
+  let centerY = (y + 0.5) * chunkSize / scale * -1;
+
+  const map = L.map('map', {
+    crs: L.CRS.Simple,
+    center: [centerY, centerX],
+    minZoom: 0,
+    maxZoom: 21,
+    zoom: tileZoom-1,
+  });
+
+  //let tilesLayer = L.tileLayer('captureTiles/Chunk_'+tileSize+'p_{x}_{y}.png', {
+  let tilesLayer = L.tileLayer('Capture/Chunk_'+chunkSize+'_'+tileSize+'p_{x}_{y}.png', {
+    tileSize: tileSize,
+    minNativeZoom: tileZoom,
+    maxNativeZoom: tileZoom,
+  }).addTo(map);
+
+  map.on('mousemove', function(e) {
+    document.title = `${e.latlng.lat} ${e.latlng.lng} z: ${map.getZoom()}`;
+  });
+}
+
+</script>
