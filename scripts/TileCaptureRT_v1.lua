@@ -212,7 +212,7 @@ local function toggleEffects(bHide)
             end
 
 
-            ksl:ExecuteConsoleCommand(world, "slomo " .. (bHide and "0.00000001" or "1"), nil)
+            ksl:ExecuteConsoleCommand(world, "slomo " .. (bHide and "0.0000001" or "1"), nil)
         end
     end
 
