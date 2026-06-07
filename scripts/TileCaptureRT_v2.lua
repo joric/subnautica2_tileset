@@ -49,7 +49,7 @@ local function setScene(bHide)
     for _, name in ipairs(names) do
         local o = FindFirstOf(name)
         if o and o:IsValid() and o.SetHiddenInGame then
-            o.SetHiddenInGame(bHide, true)
+            o:SetHiddenInGame(bHide, true)
         end
     end
 
